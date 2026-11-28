@@ -35,6 +35,13 @@ CSRF_TRUSTED_ORIGINS = [
     origin for origin in os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',') if origin
 ]
 
+# Behind Caddy in production: trust its X-Forwarded-Proto so Django knows the request was HTTPS.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
 
 # Application definition
 
