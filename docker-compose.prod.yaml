@@ -1,0 +1,26 @@
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  db:
+    # Keep Postgres private: reachable only by the api container.
+    ports: !reset []
+    restart: unless-stopped
+    logging: *default-logging
+
+  api:
+    volumes: !reset []
+    ports: !override
+      - "80:8000"
+    environment:
+      DJANGO_DEBUG: "0"
+      DJANGO_CSRF_TRUSTED_ORIGINS: ${DJANGO_CSRF_TRUSTED_ORIGINS:-}
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py collectstatic --noinput &&
+             gunicorn chatbot.wsgi:application --bind 0.0.0.0:8000 --workers 2 --access-logfile -"
+    restart: unless-stopped
+    logging: *default-logging

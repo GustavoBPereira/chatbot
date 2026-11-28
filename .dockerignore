@@ -4,3 +4,4 @@ __pycache__
 *.py[oc]
 db.sqlite3
 .env
+staticfiles
