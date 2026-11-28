@@ -40,3 +40,20 @@ docker-test: ## Run tests inside the api container
 
 docker-shell: ## Open Django shell inside the api container
 	docker compose run --rm api python manage.py shell
+
+
+# --- Production (VM) ---
+PROD = docker compose -f docker-compose.yaml -f docker-compose.prod.yaml
+
+prod-up: ## Build and start the production stack
+	$(PROD) up -d --build
+
+prod-down: ## Stop the production stack
+	$(PROD) down
+
+prod-logs: ## Follow production api logs
+	$(PROD) logs -f api
+
+deploy: ## Pull latest code and rebuild/restart production
+	git pull
+	$(PROD) up -d --build
